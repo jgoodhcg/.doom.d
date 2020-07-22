@@ -6,8 +6,8 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
-(setq user-full-name "John Doe"
-      user-mail-address "john@doe.com")
+(setq user-full-name "Justin"
+      user-mail-address "justin.good@gfs.com")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
@@ -19,9 +19,7 @@
 ;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
-(setq doom-font (font-spec :family "monospace" :size 28 :weight 'semi-light)
-      doom-big-font (font-spec :family "monospace" :size 56 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "sans" :size 13))
+(setq doom-font (font-spec :family "monospace" :size 24))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -30,7 +28,7 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
+(setq org-directory "~/gfs-nextcloud/org-roam")
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -40,7 +38,7 @@
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
 ;; - `load!' for loading external *.el files relative to this one
-;; - `use-package!' for configuring packages
+;; - `use-package' for configuring packages
 ;; - `after!' for running code after a package has loaded
 ;; - `add-load-path!' for adding directories to the `load-path', relative to
 ;;   this file. Emacs searches the `load-path' when you load packages with
@@ -48,16 +46,17 @@
 ;; - `map!' for binding new keys
 ;;
 ;; To get information about any of these functions/macros, move the cursor over
-;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
+;; the highlighted symbol at press 'K' (non-evil users must press 'C-c g k').
 ;; This will open documentation for it, including demos of how they are used.
 ;;
-;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
+;; You can also try 'gd' (or 'C-c g d') to jump to their definition and see how
 ;; they are implemented.
 
+(setq org-roam-directory "~/gfs-nextcloud/org-roam")
 
-(use-package! aggressive-indent
-  :hook
-  (clojure-mode . aggressive-indent-mode)
+;; Not sure why this doesn't work ???
+;; (custom-set-faces!
+;;   '(org-roam-link :foreground ,(doom-color 'orange)))
   (lisp-mode . aggressive-indent-mode))
 
 (use-package! ivy-cider
