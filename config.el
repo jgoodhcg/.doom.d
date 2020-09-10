@@ -57,6 +57,10 @@
 ;; Not sure why this doesn't work ???
 ;; (custom-set-faces!
 ;;   '(org-roam-link :foreground ,(doom-color 'orange)))
+
+(use-package! aggressive-indent
+  :hook
+  (clojure-mode . aggressive-indent-mode)
   (lisp-mode . aggressive-indent-mode))
 
 (use-package! ivy-cider
