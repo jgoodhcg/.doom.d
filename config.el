@@ -57,10 +57,10 @@
 ;; they are implemented.
 
 
-(use-package! aggressive-indent
-  :hook
-  (clojure-mode . aggressive-indent-mode)
-  (lisp-mode . aggressive-indent-mode))
+;; (use-package! aggressive-indent
+;;   :hook
+;;   (clojure-mode . aggressive-indent-mode)
+;;   (lisp-mode . aggressive-indent-mode))
 
 (use-package! ivy-cider
   :after cider-mode)
