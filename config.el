@@ -67,12 +67,13 @@
 
 (use-package! flycheck-clj-kondo
   :after clojure-mode
-  :config
+  :ensure t
+  ;; :config
   ;; (dolist (checkers '((clj-kondo-clj . clojure-joker)
   ;;                   (clj-kondo-cljs . clojurescript-joker)
   ;;                   (clj-kondo-cljc . clojure-joker)
   ;;                   (clj-kondo-edn . edn-joker)))
-  ;; (flycheck-add-next-checker (car checkers) (cons 'error (cdr checkers)))))
+  ;; (flycheck-add-next-checker (car checkers) (cons 'error (cdr checkers))))
   )
 
 (after! clojure-mode
