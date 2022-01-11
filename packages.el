@@ -48,15 +48,3 @@
 ;(unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
-
-(package! flycheck)
-(package! flycheck-clojure)
-(package! org)
-(package! dockerfile-mode)
-(package! aggressive-indent)
-(package! flycheck-clj-kondo)
-(package! ivy-cider
-  :recipe (:host github :repo "rschmukler/ivy-cider"))
-
-(package! git-link
-  :recipe (:host github :repo "sshaw/git-link"))
