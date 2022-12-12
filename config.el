@@ -6,8 +6,8 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
-(setq user-full-name "John Doe"
-      user-mail-address "john@doe.com")
+(setq user-full-name "Justin Good"
+      user-mail-address "jgoodhcg@gmail.com")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
@@ -21,8 +21,8 @@
 ;; font string. You generally only need these two:
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-(setq doom-font (font-spec :family "Fira Code"  :size 22)
-      doom-big-font (font-spec :family "Fira Code" :size 54))
+(setq doom-font (font-spec :family "Fira Mono"  :size 28)
+      doom-big-font (font-spec :family "Fira Mono" :size 54))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -54,3 +54,20 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+
+(use-package! flycheck-clj-kondo
+  :after clojure-mode
+  :ensure t)
+
+;; clay https://scicloj.github.io/clay/#Emacs%20CIDER
+;; (inspired by: https://github.com/clojure-emacs/cider/issues/3094)
+(require 'cider-mode)
+
+(defun cider-tap (&rest r) ; inspired by https://github.com/clojure-emacs/cider/issues/3094
+  (cons (concat "(let [__value "
+                (caar r)
+                "] (tap> {:clay-tap? true :form (quote " (caar r) ") :value __value}) __value)")
+        (cdar r)))
+
+(advice-add 'cider-nrepl-request:eval
+:filter-args #'cider-tap)
