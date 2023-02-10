@@ -23,7 +23,7 @@
 ;;
 (setq doom-font (font-spec :family "Fira Code" :size 24)
       doom-variable-pitch-font (font-spec :family "Fira Sans" :size 26)
-      doom-big-font (font-spec :family "Fira Code" :size 40))
+      doom-big-font (font-spec :family "Fira Code" :size 52))
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -75,3 +75,20 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+
+(use-package! flycheck-clj-kondo
+  :after clojure-mode
+  :ensure t)
+
+;; clay https://scicloj.github.io/clay/#Emacs%20CIDER
+;; (inspired by: https://github.com/clojure-emacs/cider/issues/3094)
+(require 'cider-mode)
+
+(defun cider-tap (&rest r) ; inspired by https://github.com/clojure-emacs/cider/issues/3094
+  (cons (concat "(let [__value "
+                (caar r)
+                "] (tap> {:clay-tap? true :form (quote " (caar r) ") :value __value}) __value)")
+        (cdar r)))
+
+(advice-add 'cider-nrepl-request:eval
+:filter-args #'cider-tap)
