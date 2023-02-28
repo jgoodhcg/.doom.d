@@ -21,10 +21,13 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 ;;
-(setq doom-font (font-spec :family "Fira Code" :size 24)
-      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 26)
-      doom-big-font (font-spec :family "Fira Code" :size 52))
-;;
+;;(setq doom-font (font-spec :family "Fira Code" :size 24 :weight 'semi-light)
+;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 26))
+
+;; For some reason `doom-variable-pitch-font' breaks doom on mac
+(setq doom-font (font-spec :family "fira code" :size 24 :weight 'semi-light)
+      doom-big-font (font-spec :family "fira code" :size 48 :weight 'semi-light))
+
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
 ;; refresh your font settings. If Emacs still can't find your font, it likely
@@ -75,6 +78,19 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+
+;; https://stackoverflow.com/a/2417617/5040125
+(defun my-put-file-name-on-clipboard ()
+  "Put the current file name on the clipboard"
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (with-temp-buffer
+        (insert filename)
+        (clipboard-kill-region (point-min) (point-max)))
+      (message filename))))
 
 (use-package! flycheck-clj-kondo
   :after clojure-mode
