@@ -25,8 +25,8 @@
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 26))
 
 ;; For some reason `doom-variable-pitch-font' breaks doom on mac
-(setq doom-font (font-spec :family "fira code" :size 24 :weight 'semi-light)
-      doom-big-font (font-spec :family "fira code" :size 48 :weight 'semi-light))
+(setq doom-font (font-spec :family "Fira Code" :size 24 :weight 'semi-light)
+      doom-big-font (font-spec :family "Fira Code" :size 48 :weight 'semi-light))
 
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
