@@ -96,18 +96,18 @@
   :after clojure-mode
   :ensure t)
 
-;; clay https://scicloj.github.io/clay/#Emacs%20CIDER
-;; (inspired by: https://github.com/clojure-emacs/cider/issues/3094)
-(require 'cider-mode)
+;; ;; clay https://scicloj.github.io/clay/#Emacs%20CIDER
+;; ;; (inspired by: https://github.com/clojure-emacs/cider/issues/3094)
+;; (require 'cider-mode)
 
-(defun cider-tap (&rest r) ; inspired by https://github.com/clojure-emacs/cider/issues/3094
-  (cons (concat "(let [__value "
-                (caar r)
-                "] (tap> {:clay-tap? true :form (quote " (caar r) ") :value __value}) __value)")
-        (cdar r)))
+;; (defun cider-tap (&rest r) ; inspired by https://github.com/clojure-emacs/cider/issues/3094
+;;   (cons (concat "(let [__value "
+;;                 (caar r)
+;;                 "] (tap> {:clay-tap? true :form (quote " (caar r) ") :value __value}) __value)")
+;;         (cdar r)))
 
-(advice-add 'cider-nrepl-request:eval
-:filter-args #'cider-tap)
+;; (advice-add 'cider-nrepl-request:eval
+;; :filter-args #'cider-tap)
 
 ;; accept completion from copilot and fallback to company
 (use-package! copilot
@@ -117,3 +117,5 @@
          :map copilot-completion-map
          ("<tab>" . 'copilot-accept-completion)
          ("TAB" . 'copilot-accept-completion)))
+
+(setq copilot-idle-delay 2)
