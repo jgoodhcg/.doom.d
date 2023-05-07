@@ -26,7 +26,8 @@
 
 ;; For some reason `doom-variable-pitch-font' breaks doom on mac
 (setq doom-font     (font-spec :family "Fira Code" :size 24 :weight 'regular)
-      doom-big-font (font-spec :family "Fira Code" :size 48 :weight 'regular))
+      doom-big-font (font-spec :family "Fira code" :size 48 :weight 'regular))
+
 
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -119,3 +120,63 @@
          ("TAB" . 'copilot-accept-completion)))
 
 (setq copilot-idle-delay 2)
+
+
+;; from chatgpt4
+(after! clojure-mode
+  (map! :map clojure-mode-map
+        :localleader
+        :desc "Reset" "r" #'kit-reset))
+
+(defun kit-reset ()
+  (interactive)
+  (save-buffer) ; Save the current buffer
+  (cider-interactive-eval
+   "(require 'integrant.repl) (if (resolve 'integrant.repl/reset) (integrant.repl/reset) (println \"No integrant.repl/reset found.\"))"))
+
+
+;; org-static-blog
+;; I've forked the repo and copied that into my doom.d
+;; https://github.com/jgoodhcg/org-static-blog/blob/master/org-static-blog.el
+(require 'org-static-blog "~/.doom.d/custom/org-static-blog.el")
+
+(setq org-static-blog-publish-title "My Static Org Blog")
+(setq org-static-blog-publish-url "https://jgoodhcg.github.io/org-blog")
+(setq org-static-blog-publish-directory "~/projects/org-blog/")
+(setq org-static-blog-posts-directory "~/projects/org-blog/posts/")
+(setq org-static-blog-drafts-directory "~/projects/org-blog/drafts/")
+(setq org-static-blog-enable-tags t)
+(setq org-export-with-toc nil)
+(setq org-export-with-section-numbers nil)
+
+;;   (you will need to create the style sheet at
+;;    ~/projects/blog/static/style.css
+;;    and the favicon at
+;;    ~/projects/blog/static/favicon.ico)
+
+;; This header is inserted into the <head> section of every page:
+(setq org-static-blog-page-header
+      "<meta name=\"author\" content=\"Justin\">
+<meta name=\"referrer\" content=\"no-referrer\">
+<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">
+<link href=\"static/css/output.css\" rel=\"stylesheet\" type=\"text/css\" />
+<link rel=\"icon\" href=\"static/favicon.ico\">")
+
+;; This preamble is inserted at the beginning of the <body> of every page:
+(setq org-static-blog-page-preamble
+      "<div class=\"container mx-auto px-4 py-4\">
+         <div class=\"header text-3xl font-semibold mb-8\">
+           <a href=\"https://jgoodhcg.github.io/org-blog\" class=\"text-black no-underline hover:text-blue-500\">My Static Org Blog</a>
+         </div>")
+
+;; This postamble is inserted at the end of the <body> of every page:
+(setq org-static-blog-page-postamble
+      "<div id=\"archive\" class=\"mt-8\">
+         <a href=\"https://jgoodhcg.github.io/org-blog/archive.html\" class=\"text-black no-underline hover:text-blue-500\">Other posts</a>
+       </div>
+       </div>")
+
+;; This HTML code is inserted into the index page between the preamble and
+;;   the blog posts
+(setq org-static-blog-index-front-matter
+      "<h1 class=\"text-4xl font-bold underline mb-6\"> Welcome to my blog </h1>\n")
