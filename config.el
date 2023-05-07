@@ -134,3 +134,6 @@
   (cider-interactive-eval
    "(require 'integrant.repl) (if (resolve 'integrant.repl/reset) (integrant.repl/reset) (println \"No integrant.repl/reset found.\"))"))
 
+;; sudo apt-get install librsvg2-bin
+;; image-toggle-display to render the source
+(add-to-list 'auto-mode-alist '("\\.svg\\'" . image-mode))
