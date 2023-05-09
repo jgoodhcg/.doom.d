@@ -137,3 +137,31 @@
 ;; sudo apt-get install librsvg2-bin
 ;; image-toggle-display to render the source
 (add-to-list 'auto-mode-alist '("\\.svg\\'" . image-mode))
+
+;; chatgpt
+(defun insert-current-date ()
+  "Insert the current date in the format 'YYYY-MM-DD'."
+  (interactive)
+  (let ((current-date (format-time-string "%Y-%m-%d Justin - ")))
+    (insert current-date)))
+
+(require 'gptai)
+(require 'gptai-turbo)
+;; set configurations
+(setq gptai-model "text-davinci-003")
+;; Load secrets file
+(load-file (expand-file-name "~/.doom.d/gptai-secrets.el"))
+;; set keybindings optionally
+;; (global-set-key (kbd "C-c o") 'gptai-send-query)
+
+;;;###autoload
+(defun gptai-turbo-query-buffer ()
+  "Sends a request to gpt-3.5-turbo using the selected buffer contents and displays the response in a new popup buffer."
+  (interactive)
+  (let* ((source-buffer (read-buffer "Select a buffer for the API text prompt: " (buffer-name (current-buffer)) t))
+         (gptai-prompt (with-current-buffer source-buffer (buffer-string)))
+         (response (gptai-turbo-request gptai-prompt)))
+    (display-buffer (get-buffer-create "*GPTAI Turbo Response*"))
+    (with-current-buffer "*GPTAI Turbo Response*"
+      (erase-buffer)
+      (insert response))))
