@@ -165,3 +165,14 @@
     (with-current-buffer "*GPTAI Turbo Response*"
       (erase-buffer)
       (insert response))))
+
+(defun create-org-file-with-date ()
+  (interactive)
+  (let* ((title (read-string "Enter title: "))
+         (date (format-time-string "%Y-%m-%d"))
+         (filename (concat date "-" title ".org"))
+         (directory "~/projects/chatgpt-org/")
+         (path (expand-file-name filename directory)))
+    (find-file path)
+    (insert (concat "#+TITLE: " title "\n"))
+    (save-buffer)))
