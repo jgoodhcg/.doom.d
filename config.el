@@ -156,23 +156,36 @@
 
 ;;;###autoload
 (defun gptai-turbo-query-buffer ()
-  "Sends a request to gpt-3.5-turbo using the selected buffer contents and displays the response in a new popup buffer."
+  "Sends a request to gpt-3.5-turbo using the selected buffer contents and appends the response in the same buffer under a new headline."
   (interactive)
   (let* ((source-buffer (read-buffer "Select a buffer for the API text prompt: " (buffer-name (current-buffer)) t))
          (gptai-prompt (with-current-buffer source-buffer (buffer-string)))
          (response (gptai-turbo-request gptai-prompt)))
-    (display-buffer (get-buffer-create "*GPTAI Turbo Response*"))
-    (with-current-buffer "*GPTAI Turbo Response*"
-      (erase-buffer)
+    (with-current-buffer source-buffer
+      (goto-char (point-max))
+      (insert "\n")
       (insert response))))
 
-(defun create-org-file-with-date ()
+(defvar chatgpt-org-dir-default "~/projects/chatgpt-org/"
+  "Default directory for new ChatGPT org files.")
+
+(defvar chatgpt-template-file-default "~/projects/chatgpt-org/template.org"
+  "Default template file for new ChatGPT org files.")
+
+(defun create-chatgpt-org-file ()
   (interactive)
   (let* ((title (read-string "Enter title: "))
          (date (format-time-string "%Y-%m-%d"))
          (filename (concat date "-" title ".org"))
-         (directory "~/projects/chatgpt-org/")
+         (directory (read-directory-name "Select a directory: " chatgpt-org-dir-default))
+         (template-file (read-file-name "Select a template file: " chatgpt-template-file-default))
          (path (expand-file-name filename directory)))
     (find-file path)
-    (insert (concat "#+TITLE: " title "\n"))
+    (if (file-exists-p template-file)
+        (progn
+          (insert-file-contents template-file)
+          (goto-char (point-min))
+          (when (re-search-forward "^#\\+TITLE:.*$" nil t)
+            (replace-match (concat "#+TITLE: " title))))
+      (insert (concat "#+TITLE: " title "\n")))
     (save-buffer)))
