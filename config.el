@@ -145,6 +145,7 @@
   (let ((current-date (format-time-string "%Y-%m-%d Justin - ")))
     (insert current-date)))
 
+;; (package-install 'gptai)
 (require 'gptai)
 (require 'gptai-turbo)
 ;; set configurations
@@ -178,7 +179,7 @@
          (date (format-time-string "%Y-%m-%d"))
          (filename (concat date "-" title ".org"))
          (directory (read-directory-name "Select a directory: " chatgpt-org-dir-default))
-         (template-file (read-file-name "Select a template file: " chatgpt-template-file-default))
+         (template-file (read-file-name "Select a template file: " chatgpt-org-dir-default))
          (path (expand-file-name filename directory)))
     (find-file path)
     (if (file-exists-p template-file)
