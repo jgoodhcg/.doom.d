@@ -2,3 +2,7 @@
 gptai-secrets.el
 
 openai-secrets.el
+
+.clj-kondo/.cache/
+
+.lsp/.cache/
