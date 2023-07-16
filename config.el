@@ -190,3 +190,94 @@
             (replace-match (concat "#+TITLE: " title))))
       (insert (concat "#+TITLE: " title "\n")))
     (save-buffer)))
+
+(defun insert-user-message ()
+  "Insert a new User message heading at the end of an org buffer."
+  (interactive)
+  (save-excursion
+    (goto-char (point-max))
+    ;; Go to the last org heading
+    (while (and (> (point) (point-min))
+                (not (org-at-heading-p)))
+      (backward-char))
+    ;; Check if we're at an org heading and it has ROLE and MSG_NUM properties
+    (let* ((last-role (when (org-at-heading-p)
+                        (org-entry-get (point) "ROLE")))
+           (last-msg-num (when (org-at-heading-p)
+                           (string-to-number (org-entry-get (point) "MSG_NUM"))))
+           (time-stamp (format-time-string "%Y-%m-%dT%T%z"))
+           (new-msg-num (when (and last-role last-msg-num)
+                            (number-to-string (+ 1 last-msg-num)))))
+      (goto-char (point-max))
+      (org-insert-heading)
+      (insert (concat "User - Message " new-msg-num))
+      (newline)
+      ;; The :END: line is essential for org mode to properly identify the property block
+      (insert ":PROPERTIES:\n:ROLE: User\n:TIMESTAMP: " time-stamp "\n:MSG_NUM: " new-msg-num "\n:END:\n"))))
+
+;; 2023-07-15 Justin - The following functions do not work yet!
+(defun parse-org-messages ()
+  "Parse an org-mode buffer into a list of message maps."
+  ;; uncomment for debugging
+  (interactive)
+  (let* ((result (org-element-map (org-element-parse-buffer) 'headline
+                  (lambda (headline)
+                    (let* ((props (org-entry-properties))
+                           (end-of-drawer (org-element-property :end (org-element-map headline 'property-drawer 'identity nil t)))
+                           (end-of-headline (org-element-property :end headline))
+                           (content (buffer-substring-no-properties end-of-drawer end-of-headline)))
+                      (list :role (cdr (assoc "ROLE" props))
+                            :timestamp (cdr (assoc "TIMESTAMP" props))
+                            :msg-num (string-to-number (cdr (assoc "MSG_NUM" props)))
+                            :content (string-trim content))))))
+         (result-str (format "%s" result)))
+
+    ;; Output the result to a new buffer uncomment for debugging
+    (with-current-buffer (get-buffer-create "*Parsed Org Messages*")
+      (erase-buffer)
+      (insert result-str)
+      (goto-char (point-min)))
+    (switch-to-buffer-other-window "*Parsed Org Messages*")
+    result))
+
+;; openai-api-key set in this file
+(load-file (expand-file-name "~/.doom.d/openai-secrets.el"))
+
+(defun send-to-chatgpt-api ()
+  "Send the current Org-mode conversation to the ChatGPT API and insert the response."
+  (interactive)
+  (require 'request)
+  (let* ((api-url "https://api.openai.com/v1/chat/completions")
+         (api-key openai-api-key)
+         (messages
+          (mapcar (lambda (msg)
+                    (list (cons 'role (plist-get msg :role))
+                          (cons 'content (plist-get msg :content))))
+                  (parse-org-messages)))
+         (json (json-serialize `((messages . ,messages)))))
+    (request
+     api-url
+     :type "POST"
+     :headers `(("Content-Type" . "application/json")
+                ("Authorization" . ,(format "Bearer %s" api-key)))
+     :data json
+     :parser 'json-read
+     :success (cl-function
+               (lambda (&key data &allow-other-keys)
+                 (let* ((choices (alist-get 'choices data))
+                        (choice (if (sequencep choices) (elt choices 0) nil))
+                        (content (when choice (alist-get 'text choice)))
+                        (timestamp (format-time-string "%Y-%m-%dT%T%z")))
+                   ;; Insert the API response as a new org heading
+                   (goto-char (point-max))
+                   (org-insert-heading)
+                   (insert (concat "Assistant - Message " (number-to-string (+ 1 (length messages))) " - " timestamp " - "))
+                   (org-set-property "ROLE" "Assistant")
+                   (org-set-property "TIMESTAMP" timestamp)
+                   (org-set-property "MSG_NUM" (number-to-string (+ 1 (length messages))))
+                   (insert content)
+                   (newline))))
+     :error (cl-function
+             (lambda (&rest args &key error-thrown &allow-other-keys)
+               (message "Got error: %S" error-thrown))))))
+
