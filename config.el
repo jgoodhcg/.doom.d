@@ -147,6 +147,9 @@
 ;; set configurations
 (setq gptai-model "text-davinci-003")
 ;; Load secrets file
+;; needs the following in it:
+;; (setq gptai-username "")
+;; (setq gptai-api-key "")
 (load-file (expand-file-name "~/.doom.d/gptai-secrets.el"))
 ;; set keybindings optionally
 ;; (global-set-key (kbd "C-c o") 'gptai-send-query)
@@ -238,6 +241,8 @@
                         (content . ,content))))
                   headlines)))))))
 
+;; contents must include
+;; (setq openai-api-key "")
 (load-file (expand-file-name "~/.doom.d/openai-secrets.el"))
 
 ;; (let* ((buffer-name "2023-07-15-test.org")
