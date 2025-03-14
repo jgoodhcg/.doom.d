@@ -106,16 +106,21 @@
 ;; (advice-add 'cider-nrepl-request:eval
 ;; :filter-args #'cider-tap)
 
-;; accept completion from copilot and fallback to company
-(use-package! copilot
-  :hook (prog-mode . copilot-mode)
-  :bind (("C-TAB" . 'copilot-accept-completion-by-word)
-         ("C-<tab>" . 'copilot-accept-completion-by-word)
-         :map copilot-completion-map
-         ("<tab>" . 'copilot-accept-completion)
-         ("TAB" . 'copilot-accept-completion)))
+;;
+;; Disabled copilot after upgrading doom-emacs and getting a deprecation message:
+;; ⛔ Warning (emacs): ‘:events-buffer-scrollback-size’ deprecated. Use ‘events-buffer-config’.
+;;
 
-(setq copilot-idle-delay 2)
+;; accept completion from copilot and fallback to company
+;; (use-package! copilot
+;;   :hook (prog-mode . copilot-mode)
+;;   :bind (("C-TAB" . 'copilot-accept-completion-by-word)
+;;          ("C-<tab>" . 'copilot-accept-completion-by-word)
+;;          :map copilot-completion-map
+;;          ("<tab>" . 'copilot-accept-completion)
+;;          ("TAB" . 'copilot-accept-completion)))
+
+;; (setq copilot-idle-delay 2)
 
 
 ;; from chatgpt4
@@ -254,3 +259,33 @@
 ;;                          (shell-quote-argument openai-api-key)
 ;;                          (shell-quote-argument data))))
 
+(defun clerk-show ()
+  (interactive)
+  (when-let ((filename (buffer-file-name)))
+    (save-buffer)
+    (cider-interactive-eval (concat "(nextjournal.clerk/show! \"" filename "\")"))))
+
+(with-eval-after-load 'clojure-mode
+  (define-key clojure-mode-map (kbd "<M-return>") 'clerk-show))
+
+;; resume latex templates using a different engine
+(add-to-list 'auto-mode-alist '("\\.xtx\\'" . latex-mode))
+(setq TeX-engine 'xetex) ;; remove this if you are using regular .tex latex files
+
+;; testing out book writing stuff
+(setq org-latex-compiler "xelatex")
+(setq org-latex-pdf-process
+      '("xelatex -interaction nonstopmode -output-directory %o %f"
+        "xelatex -interaction nonstopmode -output-directory %o %f"))
+
+(add-hook 'sql-mode-hook
+          (lambda ()
+            (setq sql-product 'postgres)))
+
+(after! ox
+  (use-package! ox-reveal
+    :config
+    (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js")))
+
+;; org mode editing has been freezing up, disabling lsp to see if that helps
+(add-hook 'org-mode-hook (lambda () (lsp-mode -1)))
